@@ -11,6 +11,7 @@ import com.share.device.service.ICabinetTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class CabinetTypeController extends BaseController {
     //修改
     @Operation(summary = "修改")
     @PutMapping
-    public AjaxResult update(@RequestBody CabinetType cabinetType) {
+    public AjaxResult update(@RequestBody @Validated CabinetType cabinetType) {
         boolean is_Success = cabinetTypeService.updateById(cabinetType);
         AjaxResult ajaxResult = toAjax(is_Success);
         return ajaxResult;
@@ -55,7 +56,7 @@ public class CabinetTypeController extends BaseController {
     @Operation(summary = "添加")
     @RequiresPermissions("device:cabinetType:add")
     @PostMapping
-    public AjaxResult add(@RequestBody CabinetType cabinetType) {
+    public AjaxResult add(@RequestBody @Validated CabinetType cabinetType) {
         boolean is_Success = cabinetTypeService.save(cabinetType);
         AjaxResult ajaxResult = toAjax(is_Success);
 
