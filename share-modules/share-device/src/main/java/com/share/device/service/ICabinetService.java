@@ -13,4 +13,10 @@ public interface ICabinetService extends IService<Cabinet> {
     List<Cabinet> searchNoUseList(String keyword);
 
     Cabinet getBtCabinetNo(String cabinetNo);
+
+    //添加
+    int saveCabinet(Cabinet cabinet);
+
+    //修改
+    int updateCabinet(Cabinet cabinet);
 }

@@ -32,27 +32,21 @@ public class CabinetController extends BaseController {
     @Operation(summary = "删除")
     @DeleteMapping("{ids}")
     public AjaxResult delete(@PathVariable Long[] ids) {
-        boolean flag = cabinetService.removeBatchByIds(Arrays.asList(ids));
-        AjaxResult ajaxResult = toAjax(flag);
-        return ajaxResult;
+        return toAjax(cabinetService.removeBatchByIds(Arrays.asList(ids)));
     }
 
     //修改
     @Operation(summary = "修改")
     @PutMapping
     public AjaxResult update(@RequestBody Cabinet cabinet) {
-        boolean flag = cabinetService.updateById(cabinet);
-        AjaxResult ajaxResult = toAjax(flag);
-        return ajaxResult;
+        return toAjax(cabinetService.updateCabinet(cabinet));
     }
 
     //添加
     @Operation(summary = "添加")
     @PostMapping
     public AjaxResult add(@RequestBody Cabinet cabinet) {
-        boolean flag = cabinetService.save(cabinet);
-        AjaxResult ajaxResult = toAjax(flag);
-        return ajaxResult;
+        return toAjax(cabinetService.saveCabinet(cabinet));
     }
 
     //根据id查询详情

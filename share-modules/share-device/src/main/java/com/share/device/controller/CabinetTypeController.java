@@ -54,7 +54,7 @@ public class CabinetTypeController extends BaseController {
 
     //添加
     @Operation(summary = "添加")
-    @RequiresPermissions("device:cabinetType:add")
+//    @RequiresPermissions("device:cabinetType:add")
     @PostMapping
     public AjaxResult add(@RequestBody @Validated CabinetType cabinetType) {
         boolean is_Success = cabinetTypeService.save(cabinetType);
