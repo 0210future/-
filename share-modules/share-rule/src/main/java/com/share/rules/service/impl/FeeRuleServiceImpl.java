@@ -1,5 +1,6 @@
 package com.share.rules.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.share.rule.domain.FeeRule;
 import com.share.rule.domain.FeeRuleRequestForm;
@@ -8,27 +9,26 @@ import com.share.rules.domain.vo.FeeRuleRequest;
 import com.share.rules.domain.vo.FeeRuleResponse;
 import com.share.rules.mapper.FeeRuleMapper;
 import com.share.rules.service.IFeeRuleService;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 /**
  * 费用规则Service业务层处理
  *
- * @author atguigu
- * @date 2024-10-25
  */
 @Slf4j
 @Service
 public class FeeRuleServiceImpl extends ServiceImpl<FeeRuleMapper, FeeRule> implements IFeeRuleService
 {
-    @Autowired
+    @Resource
     private FeeRuleMapper feeRuleMapper;
 
     @Autowired
@@ -66,5 +66,16 @@ public class FeeRuleServiceImpl extends ServiceImpl<FeeRuleMapper, FeeRule> impl
         feeRuleResponseVo.setExceedPrice(new BigDecimal(feeRuleResponse.getExceedPrice()));
 
         return feeRuleResponseVo;
+    }
+
+    @Override
+    public List<FeeRule> selectFeeRuleList(FeeRule feeRule)
+    {
+        return feeRuleMapper.selectFeeRuleList(feeRule);
+    }
+
+    @Override
+    public List<FeeRule> getALLFeeRuleList() {
+        return feeRuleMapper.selectList(new LambdaQueryWrapper<FeeRule>().eq(FeeRule::getStatus, "1"));
     }
 }
