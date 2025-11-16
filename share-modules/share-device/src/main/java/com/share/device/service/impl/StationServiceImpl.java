@@ -10,11 +10,14 @@ import com.share.device.repository.StationLocationRepository;
 import com.share.device.service.ICabinetService;
 import com.share.device.service.IRegionService;
 import com.share.device.service.IStationService;
+import jakarta.annotation.Resource;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +25,7 @@ import java.util.List;
 public class StationServiceImpl extends ServiceImpl<StationMapper, Station>
         implements IStationService {
 
-    @Autowired
+    @Resource
     private StationMapper stationMapper;
 
     @Autowired
@@ -60,30 +63,43 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station>
         String cityName = regionService.getNameByCode(station.getCityCode());
         String districtName = regionService.getNameByCode(station.getDistrictCode());
         station.setFullAddress(provinceName + cityName + districtName + station.getAddress());
-        int rows = stationMapper.insert(station);
+        this.save(station);
 
+        //同步站点位置信息到MongoDB
         StationLocation stationLocation = new StationLocation();
         stationLocation.setId(ObjectId.get().toString());
         stationLocation.setStationId(station.getId());
         stationLocation.setLocation(new GeoJsonPoint(station.getLongitude().doubleValue(), station.getLatitude().doubleValue()));
         stationLocation.setCreateTime(new Date());
         stationLocationRepository.save(stationLocation);
-
-        return rows;
+        return 1;
     }
 
-    //修改
     @Override
     public int updateStation(Station station) {
         String provinceName = regionService.getNameByCode(station.getProvinceCode());
         String cityName = regionService.getNameByCode(station.getCityCode());
         String districtName = regionService.getNameByCode(station.getDistrictCode());
         station.setFullAddress(provinceName + cityName + districtName + station.getAddress());
-        int rows = stationMapper.updateById(station);
+        this.updateById(station);
 
+        //同步站点位置信息到MongoDB
         StationLocation stationLocation = stationLocationRepository.getByStationId(station.getId());
         stationLocation.setLocation(new GeoJsonPoint(station.getLongitude().doubleValue(), station.getLatitude().doubleValue()));
         stationLocationRepository.save(stationLocation);
-        return rows;
+        return 1;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public int setData(Station station) {
+        this.updateById(station);
+
+        //更正柜机使用状态
+        Cabinet cabinet = cabinetService.getById(station.getCabinetId());
+        cabinet.setStatus("1");
+        cabinetService.updateById(cabinet);
+        return 1;
+    }
+
 }

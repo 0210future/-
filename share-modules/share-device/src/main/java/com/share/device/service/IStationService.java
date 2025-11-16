@@ -13,4 +13,6 @@ public interface IStationService extends IService<Station> {
     int saveStation(Station station);
 
     int updateStation(Station station);
+
+    int setData(Station station);
 }
