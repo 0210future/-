@@ -25,6 +25,10 @@ public class CabinetSlot extends BaseEntity
     @TableField(updateStrategy = FieldStrategy.IGNORED)//指定null时不更新该字段
     private Long powerBankId;
 
+    @Schema(description = "充电宝")
+    @TableField(exist = false)
+    private PowerBank powerBank;
+
     /** 状态（1占用 0空闲 2锁定） */
     @Schema(description = "状态")
     private String status;

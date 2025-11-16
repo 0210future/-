@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.share.device.domain.Cabinet;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ICabinetService extends IService<Cabinet> {
     //分页查询
@@ -19,4 +20,6 @@ public interface ICabinetService extends IService<Cabinet> {
 
     //修改
     int updateCabinet(Cabinet cabinet);
+
+    Map<String, Object> getAllInfo(Long id);
 }
