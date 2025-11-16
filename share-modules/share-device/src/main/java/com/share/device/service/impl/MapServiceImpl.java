@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import  org.springframework.beans.factory.annotation.Value;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
@@ -19,10 +19,31 @@ import java.util.Random;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MapServiceImpl implements IMapService {
 
+
     @Autowired
     private RestTemplate restTemplate;
 
-    private String key= "PYOBZ-Y6ZRZ-HMZXP-ZTMES-TNAQ7-WZFYS";
+    @Value("${tencent.map.key}")
+    private String key;
+
+    @Override
+    public JSONObject calculateLatLng(String keyword) {
+        String url = "https://apis.map.qq.com/ws/geocoder/v1/?address={address}&key={key}";
+
+        Map<String, String> map = new HashMap<>();
+        map.put("address", keyword);
+        map.put("key", key);
+
+        JSONObject response = restTemplate.getForObject(url, JSONObject.class, map);
+        if (response.getIntValue("status") != 0) {
+            throw new ServiceException("地图解析异常");
+        }
+
+        //返回第一条最佳线路
+        JSONObject result = response.getJSONObject("result");
+        System.out.println(result.toJSONString());
+        return result.getJSONObject("location");
+    }
 
     //计算距离
     // 四个参数：开始经纬度， 目标经纬度
